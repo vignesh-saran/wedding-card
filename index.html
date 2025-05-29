@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarah & Michael's Wedding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f9f3ee;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: url('https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* Invitation Card */
+        .invitation-card {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            height: 400px;
+            transform-style: preserve-3d;
+            transition: all 1.5s ease;
+            cursor: pointer;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .invitation-card.flipped {
+            transform: rotateY(180deg);
+            cursor: default;
+        }
+
+        /* Card Front */
+        .card-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: linear-gradient(135deg, #f5e6e8 0%, #f3e7e9 100%);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .card-front::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid rgba(210, 180, 180, 0.5);
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .card-front h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #8b5a5a;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-front p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #6d4c4c;
+        }
+
+        .card-front .cross {
+            font-size: 3rem;
+            color: #b88b8b;
+            margin: 20px 0;
+            opacity: 0.7;
+        }
+
+        .card-front .instruction {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1rem;
+            color: #8b5a5a;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Card Back */
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: linear-gradient(135deg, #f9f3ee 0%, #f5e6e8 100%);
+            border-radius: 10px;
+            padding: 30px;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .card-back::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid rgba(210, 180, 180, 0.5);
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .card-back::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=60&blur=20');
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .invitation-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #8b5a5a;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .header p {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #6d4c4c;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease 0.2s;
+        }
+
+        .couple-names {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin: 20px 0;
+            color: #5d3a3a;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease 0.4s;
+        }
+
+        .details {
+            text-align: center;
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease 0.6s;
+        }
+
+        .details p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+            color: #5d3a3a;
+        }
+
+        .bible-verse {
+            font-style: italic;
+            text-align: center;
+            margin: 20px 0;
+            color: #8b5a5a;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease 0.8s;
+        }
+
+        .map-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease 1s;
+        }
+
+        .map-container {
+            flex: 1;
+        }
+
+        .map-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #8b5a5a;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .flipped .header h2,
+        .flipped .header p,
+        .flipped .couple-names,
+        .flipped .details,
+        .flipped .bible-verse,
+        .flipped .map-section {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Sparkle Animation */
+        .sparkle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: gold;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        /* Message Box */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 80%;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(210, 180, 180, 0.5);
+        }
+
+        .message-box.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .message-box h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #8b5a5a;
+            margin-bottom: 15px;
+        }
+
+        .message-box p {
+            font-size: 1.1rem;
+            color: #5d3a3a;
+            margin-bottom: 20px;
+        }
+
+        .message-box button {
+            background: #8b5a5a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .message-box button:hover {
+            background: #6d4c4c;
+            transform: translateY(-2px);
+        }
+
+        /* Audio Controls */
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .audio-controls i {
+            font-size: 24px;
+            color: #8b5a5a;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .invitation-card {
+                height: 600px;
+            }
+
+            .card-front h1 {
+                font-size: 2.5rem;
+            }
+
+            .header h2 {
+                font-size: 2rem;
+            }
+
+            .couple-names {
+                font-size: 1.8rem;
+            }
+
+            .map-section {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .invitation-card {
+                height: 650px;
+            }
+
+            .card-front h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.8rem;
+            }
+
+            .couple-names {
+                font-size: 1.5rem;
+            }
+
+            .details p {
+                font-size: 1rem;
+            }
+
+            .message-box {
+                padding: 20px;
+            }
+
+            .message-box h3 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="invitation-card" id="invitationCard">
+            <div class="card-front">
+                <h1>Wedding Invitation</h1>
+                <div class="cross">✝</div>
+                <p>You're cordially invited to celebrate<br>the marriage of</p>
+                <p class="instruction">Click to open the invitation</p>
+            </div>
+            <div class="card-back">
+                <div class="invitation-content">
+                    <div class="header">
+                        <h2>Sarah & Michael</h2>
+                        <p>request the pleasure of your company at their wedding</p>
+                    </div>
+                    <div class="couple-names">
+                        Sarah Johnson<br>
+                        &<br>
+                        Michael Williams
+                    </div>
+                    <div class="details">
+                        <p>Saturday, the fifteenth of June</p>
+                        <p>Two thousand twenty-four</p>
+                        <p>at three o'clock in the afternoon</p>
+                        <p>Grace Community Church</p>
+                        <p>1234 Love Lane, Harmony City</p>
+                    </div>
+                    <div class="bible-verse">
+                        "Therefore what God has joined together, let no one separate."<br>
+                        — Mark 10:9
+                    </div>
+                    <div class="map-section">
+                        <div class="map-container">
+                            <div class="map-title">Wedding Ceremony Location</div>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215209179343!2d-73.98784492452545!3d40.74844097138987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                        <div class="map-container">
+                            <div class="map-title">Reception Dinner Location</div>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023.215209179343!2d-73.98784492452545!3d40.74844097138987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sGrand%20Hyatt%20New%20York!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div class="message-box" id="messageBox">
+        <h3>Welcome to Our Wedding!</h3>
+        <p>We're so excited to celebrate this special day with you. Please find all the details about our ceremony and reception locations above.</p>
+        <p>We can't wait to see you there!</p>
+        <button id="closeMessage">Got It!</button>
+    </div>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls" id="audioControls">
+        <i class="fas fa-volume-up" id="volumeIcon"></i>
+        <audio id="backgroundMusic" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const invitationCard = document.getElementById('invitationCard');
+            const audioControls = document.getElementById('audioControls');
+            const volumeIcon = document.getElementById('volumeIcon');
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            const messageBox = document.getElementById('messageBox');
+            const closeMessageBtn = document.getElementById('closeMessage');
+            let isMusicPlaying = false;
+            let hasCardBeenOpened = false;
+
+            // Open card on click
+            invitationCard.addEventListener('click', function() {
+                if (!invitationCard.classList.contains('flipped')) {
+                    invitationCard.classList.add('flipped');
+                    
+                    // Create explosive sparkle effect
+                    createExplosiveSparkles();
+                    
+                    // Show audio controls and play music (softly)
+                    if (!hasCardBeenOpened) {
+                        audioControls.style.display = 'block';
+                        backgroundMusic.volume = 0.3;
+                        backgroundMusic.play()
+                            .then(() => {
+                                isMusicPlaying = true;
+                            })
+                            .catch(e => {
+                                console.log("Autoplay was prevented. Please enable audio manually.");
+                            });
+                        hasCardBeenOpened = true;
+                        
+                        // Show message box after a delay
+                        setTimeout(() => {
+                            messageBox.classList.add('show');
+                        }, 1500);
+                    }
+                }
+            });
+
+            // Close message box
+            closeMessageBtn.addEventListener('click', function() {
+                messageBox.classList.remove('show');
+            });
+
+            // Audio controls
+            audioControls.addEventListener('click', function() {
+                if (isMusicPlaying) {
+                    backgroundMusic.pause();
+                    volumeIcon.classList.remove('fa-volume-up');
+                    volumeIcon.classList.add('fa-volume-mute');
+                } else {
+                    backgroundMusic.play();
+                    volumeIcon.classList.remove('fa-volume-mute');
+                    volumeIcon.classList.add('fa-volume-up');
+                }
+                isMusicPlaying = !isMusicPlaying;
+            });
+
+            // Create explosive sparkles function (like rocket blast)
+            function createExplosiveSparkles() {
+                const cardRect = invitationCard.getBoundingClientRect();
+                const centerX = cardRect.left + cardRect.width / 2;
+                const centerY = cardRect.top + cardRect.height / 2;
+                
+                // Create multiple bursts
+                for (let burst = 0; burst < 3; burst++) {
+                    setTimeout(() => {
+                        for (let i = 0; i < 50; i++) {
+                            const sparkle = document.createElement('div');
+                            sparkle.className = 'sparkle';
+                            document.body.appendChild(sparkle);
+                            
+                            // Random position around the card
+                            const angle = Math.random() * Math.PI * 2;
+                            const distance = 50 + Math.random() * 150;
+                            const x = centerX + Math.cos(angle) * distance;
+                            const y = centerY + Math.sin(angle) * distance;
+                            
+                            sparkle.style.left = `${x}px`;
+                            sparkle.style.top = `${y}px`;
+                            
+                            // Random size
+                            const size = 3 + Math.random() * 8;
+                            sparkle.style.width = `${size}px`;
+                            sparkle.style.height = `${size}px`;
+                            
+                            // Random color with more gold and white for explosion effect
+                            const colors = ['gold', 'gold', 'white', '#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb'];
+                            const color = colors[Math.floor(Math.random() * colors.length)];
+                            sparkle.style.backgroundColor = color;
+                            
+                            // Add glow effect
+                            sparkle.style.boxShadow = `0 0 ${size*2}px ${color}`;
+                            
+                            // Animate with more explosive movement
+                            const duration = 0.5 + Math.random() * 1.5;
+                            const delay = Math.random() * 0.5;
+                            
+                            sparkle.style.transition = `all ${duration}s ease-out ${delay}s`;
+                            sparkle.style.opacity = '1';
+                            
+                            // More explosive movement pattern
+                            const moveX = (Math.random() - 0.5) * 200;
+                            const moveY = (Math.random() - 0.5) * 200 - 100; // More upward movement
+                            sparkle.style.transform = `translate(${moveX}px, ${moveY}px) scale(${2 + Math.random() * 3})`;
+                            
+                            // Remove after animation
+                            setTimeout(() => {
+                                sparkle.style.opacity = '0';
+                                setTimeout(() => {
+                                    if (sparkle.parentNode) {
+                                        document.body.removeChild(sparkle);
+                                    }
+                                }, duration * 1000);
+                            }, 50);
+                        }
+                    }, burst * 300); // Stagger the bursts
+                }
+            }
+        });
+    </script>
+</body>
+</html>
